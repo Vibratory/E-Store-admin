@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import Delete from "../custom ui/Delete";
 import Link from "next/link";
+import Image from "next/image";
 
 export const columns: ColumnDef<ProductType>[] = [
   {
@@ -16,6 +17,23 @@ export const columns: ColumnDef<ProductType>[] = [
         {row.original.title}
       </Link>
     ),
+  },
+   {
+    accessorKey: "media",
+    header: "Picture",
+    cell: ({row}) => (
+      <Image
+     width={150}
+  height={150}
+  sizes="(max-width: 768px) 100vw, 300px"
+       style={{ objectFit: 'contain' }}  
+       alt="Product Image"
+        src={row.original.media[0]}>
+
+        </Image>
+
+    )
+  
   },
   {
     accessorKey: "category",
@@ -31,8 +49,8 @@ export const columns: ColumnDef<ProductType>[] = [
     header: "Price (DA)",
   },
   {
-    accessorKey: "expense",
-    header: "Expense (DA)",
+    accessorKey: "quantity",
+    header: "Quantity",
   },
   {
     id: "actions",

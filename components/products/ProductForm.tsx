@@ -26,16 +26,16 @@ import MultiSelect from "../custom ui/MultiSelect";
 import Loader from "../custom ui/Loader";
 
 const formSchema = z.object({
-  title: z.string().min(2).max(20),
+  title: z.string().min(2).max(150),
   description: z.string().min(2).max(500).trim(),
   media: z.array(z.string()),
   category: z.string(),
   collections: z.array(z.string()),
+  quantity: z.coerce.number().min(0),
   tags: z.array(z.string()),
   sizes: z.array(z.string()),
   colors: z.array(z.string()),
-  price: z.coerce.number().min(0.1),
-  expense: z.coerce.number().min(0.1),
+  price: z.coerce.number().min(100),
 });
 
 interface ProductFormProps {
@@ -70,23 +70,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     resolver: zodResolver(formSchema),
     defaultValues: initialData
       ? {
-          ...initialData,
-          collections: initialData.collections.map(
-            (collection) => collection._id
-          ),
-        }
+        ...initialData,
+        collections: initialData.collections.map(
+          (collection) => collection._id
+        ),
+      }
       : {
-          title: "",
-          description: "",
-          media: [],
-          category: "",
-          collections: [],
-          tags: [],
-          sizes: [],
-          colors: [],
-          price: 100,
-          expense: 100,
-        },
+        title: "",
+        description: "",
+        media: [],
+        category: "",
+        collections: [],
+        quantity: 1,
+        tags: [],
+        sizes: [],
+        colors: [],
+        price: 100,
+   
+      },
   });
 
   const handleKeyPress = (
@@ -212,24 +213,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="expense"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Expense (DA)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Expense"
-                      {...field}
-                      onKeyDown={handleKeyPress}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-1" />
-                </FormItem>
-              )}
-            />
+          
             <FormField
               control={form.control}
               name="category"
@@ -247,6 +231,26 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quantity</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Quantity"
+                      {...field}
+                      onKeyDown={handleKeyPress}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-1" />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="tags"

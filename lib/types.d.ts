@@ -13,11 +13,11 @@ type ProductType = {
   media: [string];
   category: string;
   collections: [CollectionType];
+  quantity:number;
   tags: [string];
   sizes: [string];
   colors: [string];
   price: number;
-  expense: number;
   createdAt: Date;
   updatedAt: Date;
 }

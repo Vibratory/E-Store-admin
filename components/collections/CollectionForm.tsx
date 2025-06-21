@@ -23,7 +23,7 @@ import toast from "react-hot-toast";
 import Delete from "../custom ui/Delete";
 
 const formSchema = z.object({
-  title: z.string().min(2).max(20),
+  title: z.string().min(2).max(150),
   description: z.string().min(2).max(500).trim(),
   image: z.string(),
 });
