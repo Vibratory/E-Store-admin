@@ -22,6 +22,8 @@ interface DeleteProps {
   id: string;
 }
 
+// this deete is only used in admin product deletion and collection  deletion
+
 const Delete: React.FC<DeleteProps> = ({ item, id }) => {
   const [loading, setLoading] = useState(false);
 

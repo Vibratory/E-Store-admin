@@ -13,7 +13,7 @@ type ProductType = {
   media: [string];
   category: string;
   collections: [CollectionType];
-  quantity:number;
+  stock:number;
   tags: [string];
   sizes: [string];
   colors: [string];

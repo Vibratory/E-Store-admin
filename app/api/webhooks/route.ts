@@ -4,6 +4,9 @@ import { connectToDB } from "@/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 
+
+//when stripe sends succesful purchase 
+
 export const POST = async (req: NextRequest) => {
   try {
     const rawBody = await req.text()
@@ -34,7 +37,7 @@ export const POST = async (req: NextRequest) => {
 
       const retrieveSession = await stripe.checkout.sessions.retrieve(
         session.id,
-        { expand: ["line_items.data.price.product"]}
+        { expand: ["line_items.data.price.product"] }
       )
 
       const lineItems = await retrieveSession?.line_items?.data
@@ -48,6 +51,8 @@ export const POST = async (req: NextRequest) => {
         }
       })
 
+      //add new order to db
+
       await connectToDB()
 
       const newOrder = new Order({
@@ -59,6 +64,8 @@ export const POST = async (req: NextRequest) => {
       })
 
       await newOrder.save()
+
+      //updates customer order
 
       let customer = await Customer.findOne({ clerkId: customerInfo.clerkId })
 

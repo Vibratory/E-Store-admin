@@ -49,8 +49,8 @@ export const columns: ColumnDef<ProductType>[] = [
     header: "Price (DA)",
   },
   {
-    accessorKey: "quantity",
-    header: "Quantity",
+    accessorKey: "stock",
+    header: "In Stock",
   },
   {
     id: "actions",

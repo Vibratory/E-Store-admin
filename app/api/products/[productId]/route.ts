@@ -2,6 +2,7 @@ import Collection from "@/lib/models/Collection";
 import Product from "@/lib/models/Product";
 import { connectToDB } from "@/lib/mongoDB";
 import { auth } from "@clerk/nextjs";
+import { Users } from "lucide-react";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -65,15 +66,15 @@ export const POST = async (
       media,
       category,
       collections,
-      quantity,
+      stock,
       tags,
       sizes,
       colors,
       price,
-   
+
     } = await req.json();
 
-    if (!title || !description || !media || !category || !price || !quantity) {
+    if (!title || !description || !media || !category || !price) {
       return new NextResponse("Not enough data to create a new product", {
         status: 400,
       });
@@ -115,12 +116,12 @@ export const POST = async (
         media,
         category,
         collections,
-        quantity,
+        stock,
         tags,
         sizes,
         colors,
         price,
-     
+
       },
       { new: true }
     ).populate({ path: "collections", model: Collection });
@@ -166,6 +167,15 @@ export const DELETE = async (
         })
       )
     );
+
+    /*update wishlist
+    await Promise.all(
+      product.users.map((userId: string) =>
+        Users.findByIdAndUpdate(userId, {
+          $pull: { wishlist: product._id },
+        })
+      )
+    );*/
 
     return new NextResponse(JSON.stringify({ message: "Product deleted" }), {
       status: 200,

@@ -31,7 +31,7 @@ const formSchema = z.object({
   media: z.array(z.string()),
   category: z.string(),
   collections: z.array(z.string()),
-  quantity: z.coerce.number().min(0),
+  stock: z.coerce.number().min(0, { message: "Stock must be 0 or greater" }),
   tags: z.array(z.string()),
   sizes: z.array(z.string()),
   colors: z.array(z.string()),
@@ -81,12 +81,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
         media: [],
         category: "",
         collections: [],
-        quantity: 1,
+        stock: 1,
         tags: [],
         sizes: [],
         colors: [],
         price: 100,
-   
+
       },
   });
 
@@ -213,7 +213,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-          
+
             <FormField
               control={form.control}
               name="category"
@@ -234,14 +234,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
 
             <FormField
               control={form.control}
-              name="quantity"
+              name="stock"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel>In Stock</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="Quantity"
+                      placeholder="In Stock"
                       {...field}
                       onKeyDown={handleKeyPress}
                     />
