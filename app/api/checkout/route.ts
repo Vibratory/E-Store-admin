@@ -5,6 +5,8 @@ import { format } from "date-fns";
 import Order from "@/lib/models/Order";
 import Customer from "@/lib/models/Customer";
 import axios from "axios";
+import { title } from "process";
+import Product from "@/lib/models/Product";
 
 
 
@@ -40,19 +42,39 @@ export async function POST(req: NextRequest) {
 
     //getting price of product  from db 
 
+    await connectToDB();
 
+    let totalAmount = 0;
 
+    for (const item of cartItems) {
+      const DBproduct = await Product.findById(item.item._id);
 
+      if (!DBproduct) {
+        return NextResponse.json(
+          { error: `product with id ${item.item._id} not found` },
+          { status: 404, headers: corsHeaders }
+
+        );
+      }
+
+      const itemTotal = DBproduct.price * item.quantity;
+      totalAmount += itemTotal;
+
+    }
 
     //adding order to database
-    await connectToDB();
 
     const newOrder = new Order({
       customerClerkId: customer.clerkId,
-      products: cartItems,
+      products: cartItems.map((item: any) => ({
+        product: item.item._id, 
+        color: item.color,
+        size: item.size,
+        quantity: item.quantity,
+      })),
       shippingAddress: shipInfo,
-      shippingRate: "100", //yalidine api to get shipping price
-      totalAmount: cartItems.totalAmount ? cartItems.totalAmount / 100 : 0,
+      shippingRate: "from delivery api", //yalidine api to get shipping price
+      totalAmount,
     })
 
     await newOrder.save()
@@ -80,16 +102,16 @@ export async function POST(req: NextRequest) {
 
     console.log(cartItems.map((item: any) => item.item.title))
 
-  
+
     const text = `
         Message : "new order please confirm "
-         ${JSON.stringify(cartItems.map((cartItem: any) =>({ 
-          title : cartItem.item.title, 
-          quantity : cartItem.quantity,
-          size: cartItem.size,
-          color: cartItem.color,
-        }))
-      )}
+         ${JSON.stringify(cartItems.map((cartItem: any) => ({
+      title: cartItem.item.title,
+      quantity: cartItem.quantity,
+      size: cartItem.size,
+      color: cartItem.color,
+    }))
+    )}
       
           ${JSON.stringify(shipInfo)}`; // should include all details of order and time of order
 

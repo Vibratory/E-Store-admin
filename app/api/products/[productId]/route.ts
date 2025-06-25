@@ -2,9 +2,11 @@ import Collection from "@/lib/models/Collection";
 import Product from "@/lib/models/Product";
 import { connectToDB } from "@/lib/mongoDB";
 import { auth } from "@clerk/nextjs";
-import { Users } from "lucide-react";
+//import { Users } from "lucide-react";
+import Users from "@/lib/models/User"
 
 import { NextRequest, NextResponse } from "next/server";
+import User from "@/lib/models/User";
 
 export const GET = async (
   req: NextRequest,
@@ -168,14 +170,14 @@ export const DELETE = async (
       )
     );
 
-    /*update wishlist
-    await Promise.all(
-      product.users.map((userId: string) =>
-        Users.findByIdAndUpdate(userId, {
+    //update wishlist
+     await Promise.all(
+      product.collections.map((userId: string) =>
+        User.findByIdAndUpdate(userId, {
           $pull: { wishlist: product._id },
         })
       )
-    );*/
+    );
 
     return new NextResponse(JSON.stringify({ message: "Product deleted" }), {
       status: 200,

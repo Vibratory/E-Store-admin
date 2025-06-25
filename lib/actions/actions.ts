@@ -36,4 +36,12 @@ export const getSalesPerMonth = async () => {
   })
 
   return graphData
+
+  
 }
+export const formatDZD = (price: number) => {
+  return new Intl.NumberFormat('FR-DZ', {
+    style: 'currency',
+    currency: 'DZD',
+  }).format(price);
+};

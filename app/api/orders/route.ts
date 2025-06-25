@@ -7,26 +7,34 @@ import { format } from "date-fns";
 
 export const GET = async (req: NextRequest) => {
   try {
-    await connectToDB()
+    await connectToDB();
 
-    const orders = await Order.find().sort({ createdAt: "desc" })
+    // ✅ Now you're getting full product data
+    const orders = await Order.find()
+      .sort({ createdAt: "desc" })
+      .populate("products.product");
 
-    const orderDetails = await Promise.all(orders.map(async (order) => {
-      const customer = await Customer.findOne({ clerkId: order.customerClerkId })
-      return {
-        _id: order._id,
-        customer: customer.name,
-        products: order.products.length,
-        totalAmount: order.totalAmount,
-        createdAt: format(order.createdAt, "MMM do, yyyy")
-      }
-    }))
+    const orderDetails = await Promise.all(
+      orders.map(async (order) => {
+        const customer = await Customer.findOne({
+          clerkId: order.customerClerkId,
+        });
+
+        return {
+          _id: order._id,
+          customer: customer?.name || "Unknown",
+          products: order.products, // full product info now
+          totalAmount: order.totalAmount,
+          createdAt: format(order.createdAt, "MMM do, yyyy"),
+        };
+      })
+    );
 
     return NextResponse.json(orderDetails, { status: 200 });
   } catch (err) {
-    console.log("[orders_GET]", err)
+    console.log("[orders_GET]", err);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
-}
+};
 
 export const dynamic = "force-dynamic";
