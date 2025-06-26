@@ -45,3 +45,4 @@ export const formatDZD = (price: number) => {
     currency: 'DZD',
   }).format(price);
 };
+

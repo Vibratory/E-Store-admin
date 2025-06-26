@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import {  Button } from "@radix-ui/themes";
+import { Button } from "@radix-ui/themes";
 
 export const columns: ColumnDef<OrderColumnType>[] = [
   {
@@ -32,16 +32,16 @@ export const columns: ColumnDef<OrderColumnType>[] = [
     accessorKey: "createdAt",
     header: "Created At",
   },
- {
-  accessorKey: "action",
-  header: "Actions", // optional but useful
-  cell: ({ row }) => ( 
-    <div>
-     <Button className="left-5" size="1" color="red" variant="solid">Confirm </Button>
-          <Button className="left-50" size="1" color="red" variant="soft">Cancel </Button>
-               </div>
+  {
+    accessorKey: "action",
+    header: "Actions", // optional but useful
+    cell: ({ row }) => (
+      <div>
+        <Button className="left-5" size="1" color="red" variant="solid">Confirm </Button>
+        <Button className="left-50" size="1" color="red" variant="soft">Cancel </Button>
+      </div>
 
 
-  ),
-}
+    ),
+  }
 ];

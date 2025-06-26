@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 type CollectionType = {
   _id: string;
   title: string;
@@ -31,6 +33,8 @@ type OrderColumnType = {
 }
 
 type OrderItemType = {
+  _id : string
+  orderId: string
   product: ProductType
   color: string;
   size: string;

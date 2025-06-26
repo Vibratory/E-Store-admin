@@ -9,7 +9,6 @@ export const GET = async (req: NextRequest) => {
   try {
     await connectToDB();
 
-    // ✅ Now you're getting full product data
     const orders = await Order.find()
       .sort({ createdAt: "desc" })
       .populate("products.product");
