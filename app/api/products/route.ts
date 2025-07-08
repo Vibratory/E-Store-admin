@@ -26,6 +26,7 @@ export const POST = async (req: NextRequest) => {
       sizes,
       colors,
       price,
+      colorVariants
      
     } = await req.json();
 
@@ -46,6 +47,7 @@ export const POST = async (req: NextRequest) => {
       sizes,
       colors,
       price,
+      colorVariants
     });
 
     await newProduct.save();

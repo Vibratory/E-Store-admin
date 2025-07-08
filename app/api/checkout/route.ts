@@ -23,9 +23,8 @@ export async function OPTIONS() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { cartItems, customer, shipInfo } = await req.json()
+    const { cartItems, customer, shipInfo, orderstatus } = await req.json()
 
-    console.log("Received checkout request:", { cartItems, customer, shipInfo })
 
     if (!cartItems || !shipInfo) {
       console.log("not enough data bitch")
@@ -67,7 +66,7 @@ export async function POST(req: NextRequest) {
     const newOrder = new Order({
       customerClerkId: customer.clerkId,
       products: cartItems.map((item: any) => ({
-        product: item.item._id, 
+        product: item.item._id,
         color: item.color,
         size: item.size,
         quantity: item.quantity,
@@ -75,6 +74,8 @@ export async function POST(req: NextRequest) {
       shippingAddress: shipInfo,
       shippingRate: "from delivery api", //yalidine api to get shipping price
       totalAmount,
+      status: "New Order"
+
     })
 
     await newOrder.save()

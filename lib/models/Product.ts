@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { string } from "zod";
 
 const ProductSchema = new mongoose.Schema({
   title: String,
@@ -6,11 +7,24 @@ const ProductSchema = new mongoose.Schema({
   media: [String],
   category: String,
   collections: [{ type: mongoose.Schema.Types.ObjectId, ref: "Collection" }],
-  stock : String,
+  stock: String,
   tags: [String],
+
+  colorVariants: [
+    {
+      name: String,
+      sizes: [
+        {
+          name: String,
+          quantity: Number
+        }
+      ]
+    }
+  ],
+  
   sizes: [String],
   colors: [String],
-  price: { type: mongoose.Schema.Types.Decimal128, get: (v: mongoose.Schema.Types.Decimal128) => { return parseFloat(v.toString()) }},
+  price: { type: mongoose.Schema.Types.Decimal128, get: (v: mongoose.Schema.Types.Decimal128) => { return parseFloat(v.toString()) } },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 }, { toJSON: { getters: true } });

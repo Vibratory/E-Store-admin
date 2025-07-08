@@ -24,6 +24,7 @@ export const GET = async (req: NextRequest) => {
           customer: customer?.name || "Unknown",
           products: order.products, // full product info now
           totalAmount: order.totalAmount,
+          status: order.status,
           createdAt: format(order.createdAt, "MMM do, yyyy"),
         };
       })

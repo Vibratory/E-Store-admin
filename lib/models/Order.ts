@@ -13,6 +13,7 @@ const orderSchema = new mongoose.Schema({
       quantity: Number,
     },
   ],
+
   shippingAddress: {
     name: String,
     number: String,
@@ -22,8 +23,11 @@ const orderSchema = new mongoose.Schema({
     zip: String,
     
   },
+
   shippingRate: String,
   totalAmount: Number,
+  status : String,
+  
   createdAt: {
     type: Date,
     default: Date.now,

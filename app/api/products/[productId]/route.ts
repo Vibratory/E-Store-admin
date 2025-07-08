@@ -73,8 +73,11 @@ export const POST = async (
       sizes,
       colors,
       price,
+      colorVariants
 
     } = await req.json();
+
+     console.log("color variants might be object ", JSON.stringify(colorVariants))
 
     if (!title || !description || !media || !category || !price) {
       return new NextResponse("Not enough data to create a new product", {
@@ -123,6 +126,7 @@ export const POST = async (
         sizes,
         colors,
         price,
+        colorVariants
 
       },
       { new: true }

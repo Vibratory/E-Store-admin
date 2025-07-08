@@ -3,48 +3,34 @@
 import { ColumnDef } from "@tanstack/react-table"
 import Link from "next/link"
 import Image from "next/image"
-import { MinusCircle, PlusCircle, Trash } from "lucide-react"
-import { useState, useEffect } from "react"
-
-
-
-
-
-
-export const DataFromParent = ({ data }: { data: string }) => {
-  const [datas, setDatas] = useState<string>("")
-
-  useEffect(() => {
-
-    setDatas(data)
-  }, []);
-
-  return <p> ordevre id from parent {data}</p>
-
-}
-
+import { useState } from "react"
 
 // Quantity Cell Component to rerender quantity
-
 
 export const QuantityCell = ({
   initialQuantity,
   itemId,
+  itemPrice,
   orderId,
+  total
 
 }: {
   initialQuantity: number;
   itemId: string;
+  itemPrice: number
   orderId: string;
+  total: number;
 }) => {
 
+  let newTotal = total;
+
   const [quantity, setQuantity] = useState(initialQuantity)
+  const [newQuantity, setNewQuantity] = useState<number>(initialQuantity)
   const [isLoading, setIsLoading] = useState(false)
 
   //updates quantity in DB after u click minus or plus 
-  const updateQuantityInDB = async (newQuantity: number) => {
+  const updateQuantityInDB = async (newQuantity: number, newtotal: number) => {
     setIsLoading(true)
-
     try {
       await fetch(`/api/orders/update`, {
         method: 'POST',
@@ -53,6 +39,7 @@ export const QuantityCell = ({
           newQuantity,
           itemId,
           orderId,
+          total: newtotal
 
         }),
       })
@@ -62,32 +49,97 @@ export const QuantityCell = ({
       setIsLoading(false)
     }
   }
-//when u click plus button
+
+
+  /*/when u click plus button
   const quantityIncrease = () => {
 
     const newQuantity = quantity + 1
+    console.log("total", total, "itemPrice", itemPrice, "quantity", quantity, "newQuantity", newQuantity);
+
+    total = total + (itemPrice * (newQuantity - initialQuantity))
+
+    console.log("total after calculations", total)
+
     setQuantity(newQuantity)
     updateQuantityInDB(newQuantity)
 
   }
-//when u click minus button 
+  //when u click minus button 
   const quantityDecrease = () => {
     if (quantity > 0) {
       // Prevent going below 1
       const newQuantity = quantity - 1
+      console.log("total", total, "itemPrice", itemPrice, "quantity", quantity, "newQuantity", newQuantity);
+
+      total = total - (itemPrice * (initialQuantity - newQuantity))
+
       setQuantity(newQuantity)
       updateQuantityInDB(newQuantity)
+
+    }
+  }*/
+
+
+  //when u click enter on the quantity field
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+
+      let calculatedTotal = newTotal;
+
+
+      if (newQuantity > quantity) {
+
+        console.log("newtotal", newTotal, "itemPrice", itemPrice, "quantity", quantity, "newQuantity", newQuantity);
+
+        calculatedTotal = calculatedTotal + (itemPrice * (newQuantity - quantity));
+
+        console.log("new tota l calculatedTotal after ", calculatedTotal);
+
+      } else {
+
+        console.log("newtotal", newTotal, "itemPrice", itemPrice, "quantity", quantity, "newQuantity", newQuantity);
+
+        calculatedTotal = calculatedTotal - (itemPrice * (quantity - newQuantity))
+
+
+        console.log("new total calculatedTotal after ", calculatedTotal);
+
+      }
+
+
+      //set new quantity asinitial cuz it doesnt refetch it again if u change it twice or more
+      setQuantity(newQuantity)
+      newTotal = calculatedTotal;
+      updateQuantityInDB(newQuantity, calculatedTotal)
 
     }
   }
 
   return (
     <div className="flex gap-4 items-center">
-      <MinusCircle onClick={quantityDecrease} className={`hover:text-red-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
+
+      <input
+        className={`hover:text-red-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
+        type="number"
+        value={newQuantity}
+        onChange={(e) => setNewQuantity(parseFloat(e.target.value))}
+        placeholder={initialQuantity.toString()}
+        onKeyDown={handleKeyPress}
+      />
+
+
+
+
+
+
+
+      {/* <MinusCircle onClick={quantityDecrease} className={`hover:text-red-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
       />
       <p>{quantity}</p>
       <PlusCircle onClick={quantityIncrease} className={`hover:text-red-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
-      />
+      />*/}
+
     </div>
   )
 }
@@ -132,22 +184,43 @@ export const columns: ColumnDef<OrderItemType>[] = [
     accessorKey: "quantity",
     header: "Quantity",
     cell: ({ row }) => (
+      <div>
+        <QuantityCell
+          initialQuantity={row.original.quantity}
+          itemId={row.original._id}
+          itemPrice={row.original.product.price}
+          orderId={row.original.orderId}
+          total={row.original.totalAmount}
+        />
 
-      <QuantityCell
-        initialQuantity={row.original.quantity}
-        itemId={row.original._id}
-        orderId={row.original.orderId}
-      />
+      </div>
 
 
     ),
+  },
+  {
+    accessorKey: "stock",
+    header: "In Stock",
+    cell: ({ row }) => {
+      if (row.original.product.stock > 0) {
+        
+          return <p>{row.original.product.stock} Piece(s) restant</p>
+        
+
+      } else {
+
+        
+          return <p className="text-red-600">No more items in stock</p>
+        
+      }
+    }
   },
   {
     accessorKey: "price",
     header: "Price",
     cell: ({ row }) => (
 
-      <p>{row.original.product.price * row.original.quantity}</p>
+      <p>{row.original.product.price * row.original.quantity} DA</p>
     )
   }
 ]

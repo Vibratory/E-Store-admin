@@ -8,10 +8,12 @@ import { Button } from "@radix-ui/themes"
 
 import { useEffect, useState } from "react"
 
+
 //ALL orders table not specific order
 
  
 const Orders = () => {
+
   const [loading, setLoading] = useState(true)
   const [orders, setOrders] = useState([])
 
@@ -26,7 +28,12 @@ const Orders = () => {
     }
   }
 
-
+  
+const orderswithstatus = orders.map((item: any) => ({
+  ...item,
+  status: item.status, // silently attach it
+  
+}));
 
   useEffect(() => {
     getOrders()
@@ -36,7 +43,7 @@ const Orders = () => {
     <div className="px-10 py-5">
       <p className="text-heading2-bold">Orders</p>
       <Separator className="bg-grey-1 my-5" />
-      <DataTable columns={columns} data={orders} searchKey="_id" />
+      <DataTable columns={columns} data={orderswithstatus} searchKey="_id" />
 
     </div>
   )

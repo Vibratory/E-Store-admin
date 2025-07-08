@@ -1,8 +1,9 @@
-"use client";
+"use client"
 
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { Button } from "@radix-ui/themes";
+import { UpdateStatus } from "./OrderUpdate";
+
 
 export const columns: ColumnDef<OrderColumnType>[] = [
   {
@@ -20,14 +21,29 @@ export const columns: ColumnDef<OrderColumnType>[] = [
     },
   },
   {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const stutus = row.getValue("status") as string;
+      return (
+        <div>
+          {stutus == "Confirmed" ?
+            <p className="text-body-bold text-green-600">{stutus}</p>
+            :
+            <p className="text-body-bold text-red-600">{stutus}</p>}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "customer",
     header: "Customer",
   },
 
-  {
-    accessorKey: "totalAmount",
-    header: "Total (DA)",
-  },
+  //{
+   // accessorKey: "totalAmount",
+   // header: "Total (DA)",
+  //},
   {
     accessorKey: "createdAt",
     header: "Created At",
@@ -37,8 +53,12 @@ export const columns: ColumnDef<OrderColumnType>[] = [
     header: "Actions", // optional but useful
     cell: ({ row }) => (
       <div>
-        <Button className="left-5" size="1" color="red" variant="solid">Confirm </Button>
-        <Button className="left-50" size="1" color="red" variant="soft">Cancel </Button>
+        <UpdateStatus
+          orderId={row.original._id}
+          status={row.getValue("status") as string}
+
+        />
+
       </div>
 
 

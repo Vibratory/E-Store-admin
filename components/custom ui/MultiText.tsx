@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { X } from "lucide-react";
 
 interface MultiTextProps {
-  placeholder: string;
+  placeholder?: string;
   value: string[];
   onChange: (value: string) => void;
   onRemove: (value: string) => void;

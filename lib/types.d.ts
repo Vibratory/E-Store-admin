@@ -15,8 +15,9 @@ type ProductType = {
   media: [string];
   category: string;
   collections: [CollectionType];
-  stock:number;
+  stock: number;
   tags: [string];
+  colorVariants: ColorVariationsType[],
   sizes: [string];
   colors: [string];
   price: number;
@@ -29,11 +30,12 @@ type OrderColumnType = {
   customer: string;
   products: number;
   totalAmount: number;
+  status: string,
   createdAt: string;
 }
 
 type OrderItemType = {
-  _id : string
+  _id: string
   orderId: string
   product: ProductType
   color: string;
@@ -45,4 +47,14 @@ type CustomerType = {
   clerkId: string;
   name: string;
   email: string;
+}
+
+type ColorVariationsType = {
+  name: String,
+  sizes: SizeVariationsType[],
+}
+
+type SizeVariationsType = {
+  name: String,
+  quantity: Number
 }
