@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
+import { ColorVariationsType, SizeVariationsType } from "@/lib/types"
 
 // Quantity Cell Component to rerender quantity
 
@@ -87,24 +88,10 @@ export const QuantityCell = ({
 
       let calculatedTotal = newTotal;
 
-
       if (newQuantity > quantity) {
-
-        console.log("newtotal", newTotal, "itemPrice", itemPrice, "quantity", quantity, "newQuantity", newQuantity);
-
         calculatedTotal = calculatedTotal + (itemPrice * (newQuantity - quantity));
-
-        console.log("new tota l calculatedTotal after ", calculatedTotal);
-
       } else {
-
-        console.log("newtotal", newTotal, "itemPrice", itemPrice, "quantity", quantity, "newQuantity", newQuantity);
-
         calculatedTotal = calculatedTotal - (itemPrice * (quantity - newQuantity))
-
-
-        console.log("new total calculatedTotal after ", calculatedTotal);
-
       }
 
 
@@ -127,18 +114,6 @@ export const QuantityCell = ({
         placeholder={initialQuantity.toString()}
         onKeyDown={handleKeyPress}
       />
-
-
-
-
-
-
-
-      {/* <MinusCircle onClick={quantityDecrease} className={`hover:text-red-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
-      />
-      <p>{quantity}</p>
-      <PlusCircle onClick={quantityIncrease} className={`hover:text-red-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
-      />*/}
 
     </div>
   )
@@ -202,17 +177,34 @@ export const columns: ColumnDef<OrderItemType>[] = [
     accessorKey: "stock",
     header: "In Stock",
     cell: ({ row }) => {
-      if (row.original.product.stock > 0) {
-        
-          return <p>{row.original.product.stock} Piece(s) restant</p>
-        
+      //chack quantity from databse and alert user if item is out of stock befor confirming
+      return (
+        (() => {
+          const variant = row.original.product.colorVariants.find(
+            (variant: ColorVariationsType) => variant.name === row.original.color
+          );
 
-      } else {
+          const size = variant?.sizes.find(
+            (size: SizeVariationsType) => size.name === row.original.size
+          );
+         
+          // checks if quantity orderes is in stock or the order is more than what we have in stock
+          if (size.quantity === 0) {
 
-        
-          return <p className="text-red-600">No more items in stock</p>
-        
-      }
+            return <p className="text-red-600">Epuise</p>
+
+
+          } else if (size.quantity < row.original.quantity) {
+            return <p className="text-red-600">Quantite demande depasse le stock</p>
+
+
+          } else {
+            return <p>Stock: {size.quantity}</p>
+          }
+
+        })()
+      )
+
     }
   },
   {

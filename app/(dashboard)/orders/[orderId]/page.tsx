@@ -8,8 +8,8 @@ const OrderDetails = async ({ params }: { params: { orderId: string } }) => {
 
   const res = await fetch(`${process.env.ADMIN_DASHBOARD_URL}/api/orders/${params.orderId}`)
 
-  const { orderDetails, customer } = await res.json()
-  const { city, state, zip, number } = orderDetails.shippingAddress
+  const { orderDetails } = await res.json()
+  const { city, state, zip, number, name } = orderDetails.shippingAddress
 
 
   //addd update price in DB
@@ -47,7 +47,7 @@ const OrderDetails = async ({ params }: { params: { orderId: string } }) => {
         Order ID: <span className="text-base-medium">{orderDetails._id}</span>
       </p>
       <p className="text-base-bold">
-        Customer name: <span className="text-base-medium">{customer.name}</span>
+        Customer name: <span className="text-base-medium">{name}</span>
       </p>
       <p className="text-base-bold">
         Phone Number: <span className="text-base-medium">{number}</span>
@@ -73,6 +73,7 @@ const OrderDetails = async ({ params }: { params: { orderId: string } }) => {
       </p>
 
       <DataTable columns={columns} data={productsWithOrderId} searchKey="product" />
+
       <UpdateStatus
         orderId={orderDetails._id}
         status={orderDetails.status} />

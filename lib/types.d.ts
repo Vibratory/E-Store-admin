@@ -32,6 +32,7 @@ type OrderColumnType = {
   totalAmount: number;
   status: string,
   createdAt: string;
+  name: string
 }
 
 type OrderItemType = {
@@ -50,11 +51,11 @@ type CustomerType = {
 }
 
 type ColorVariationsType = {
-  name: String,
+  name: string,
   sizes: SizeVariationsType[],
 }
 
 type SizeVariationsType = {
-  name: String,
-  quantity: Number
+  name: string,
+  quantity: number
 }

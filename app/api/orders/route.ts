@@ -15,6 +15,7 @@ export const GET = async (req: NextRequest) => {
 
     const orderDetails = await Promise.all(
       orders.map(async (order) => {
+
         const customer = await Customer.findOne({
           clerkId: order.customerClerkId,
         });
@@ -22,10 +23,12 @@ export const GET = async (req: NextRequest) => {
         return {
           _id: order._id,
           customer: customer?.name || "Unknown",
+           name: order.shippingAddress.name ,
           products: order.products, // full product info now
           totalAmount: order.totalAmount,
           status: order.status,
-          createdAt: format(order.createdAt, "MMM do, yyyy"),
+          createdAt: format(order.createdAt, "MMM do, yyyy hh:mm:ss"),
+         
         };
       })
     );

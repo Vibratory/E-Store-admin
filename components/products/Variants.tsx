@@ -1,7 +1,10 @@
 // components/ColorVariantItem.tsx
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { FaTrash } from 'react-icons/fa';
+
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
 import {
   FormField,
   FormItem,
@@ -45,30 +48,43 @@ const ColorVariantItem: React.FC<ColorVariantItemProps> = ({
         )}
       />
 
-      {sizeFields.map((size, sizeIndex) => (
-        <div key={size.id} className="flex gap-2">
-          <Input
-            placeholder="Size"
-            {...register(`colorVariants.${index}.sizes.${sizeIndex}.name`)}
-          />
-          <Input
-            type="number"
-            placeholder="Quantity"
-            {...register(`colorVariants.${index}.sizes.${sizeIndex}.quantity`, {
-              valueAsNumber: true,
-            })}
-          />
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={() => removeSize(sizeIndex)}
-          >
-            Remove Size
-          </Button>
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Label className="w-1/3">Size</Label>
+          <Label className="w-1/3">Quantity</Label>
+          <div className="w-1/3" /> {/* Empty space for Remove button */}
         </div>
-      ))}
+
+        {sizeFields.map((size, sizeIndex) => (
+          <div key={size.id} className="flex gap-2">
+            <Input
+              placeholder="Size"
+              className="w-1/3"
+              {...register(`colorVariants.${index}.sizes.${sizeIndex}.name`)}
+            />
+            <Input
+              type="number"
+              placeholder="Quantity"
+              className="w-1/3"
+              {...register(`colorVariants.${index}.sizes.${sizeIndex}.quantity`, {
+                valueAsNumber: true,
+              })}
+            />
+            <FaTrash
+              type="button"
+              className="w-1/6 h-7 text-red-600 rounded"
+              size={10}
+              onClick={() => removeSize(sizeIndex)}
+            >
+            </FaTrash>
+          </div>
+        ))}
+      </div>
+
+
 
       <Button
+        className="bg-blue-600 text-white"
         type="button"
         variant="outline"
         onClick={() => addSize({ name: "", quantity: 0 })}
@@ -77,8 +93,8 @@ const ColorVariantItem: React.FC<ColorVariantItemProps> = ({
       </Button>
 
       <Button
+        className="bg-red-600 text-white"
         type="button"
-        variant="destructive"
         onClick={removeColor}
       >
         Remove Color

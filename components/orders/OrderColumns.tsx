@@ -2,10 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { UpdateStatus } from "./OrderUpdate";
 
 
 export const columns: ColumnDef<OrderColumnType>[] = [
+  
   {
     accessorKey: "_id",
     header: "Order",
@@ -24,20 +24,29 @@ export const columns: ColumnDef<OrderColumnType>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
+        console.log("Row data:", row.original);
+
       const stutus = row.getValue("status") as string;
       return (
         <div>
+          
           {stutus == "Confirmed" ?
-            <p className="text-body-bold text-green-600">{stutus}</p>
+            <p className="text-body-bold text-green-600">{stutus} </p>
+            
             :
-            <p className="text-body-bold text-red-600">{stutus}</p>}
+            <p className="text-body-bold text-red-600">{stutus} </p>}
         </div>
       );
     },
   },
   {
-    accessorKey: "customer",
+    //accessorKey: "customer",
     header: "Customer",
+    cell : ({row}) => {
+
+      return <p>{row.original.name}</p>
+    
+    }
   },
 
   //{
@@ -48,20 +57,5 @@ export const columns: ColumnDef<OrderColumnType>[] = [
     accessorKey: "createdAt",
     header: "Created At",
   },
-  {
-    accessorKey: "action",
-    header: "Actions", // optional but useful
-    cell: ({ row }) => (
-      <div>
-        <UpdateStatus
-          orderId={row.original._id}
-          status={row.getValue("status") as string}
 
-        />
-
-      </div>
-
-
-    ),
-  }
 ];
