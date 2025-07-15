@@ -1,18 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server"
 //import { stripe } from "@/lib/stripe"
 import { connectToDB } from "@/lib/mongoDB";
-import { format } from "date-fns";
 import Order from "@/lib/models/Order";
 import Customer from "@/lib/models/Customer";
 import axios from "axios";
-import { title } from "process";
 import Product from "@/lib/models/Product";
 
 
 
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "*", //to be changed
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 }
@@ -101,26 +99,27 @@ export async function POST(req: NextRequest) {
 
     const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-    console.log(cartItems.map((item: any) => item.item.title))
+    const message = "Nouvelle commande";
 
 
-    const text = `
-        Message : "new order please confirm "
-         ${JSON.stringify(cartItems.map((cartItem: any) => ({
-      title: cartItem.item.title,
-      quantity: cartItem.quantity,
-      size: cartItem.size,
-      color: cartItem.color,
-    }))
-    )}
-      
-          ${JSON.stringify(shipInfo)}`; // should include all details of order and time of order
+    let text = `Message : ${message} \n\n`; // should include all details of order and time of order
 
+    cartItems.forEach((item) => {
+      text += `Produit: ${item.item.title}\n`
+      text += `Quantity: ${item.quantity}\n`
+      text += `Taille: ${item.size}\n`
+      text += `Couleur: ${item.color}\n\n`
+    })
 
-
+    text += `Client\n`
+    text += `Nom: ${shipInfo.name}\n`;
+    text += `Numero: ${shipInfo.number}\n`;
+    text += `Email: ${shipInfo.email}\n`;
+    text += `Wilaya: ${shipInfo.state}\n`;
+    text += `Ville: ${shipInfo.city}\n`;
+    text += `Code Postal: ${shipInfo.zip}`;
 
     try {
-      console.log("chat id is", chat_id)
       const response = await axios.post(telegramUrl, {
         chat_id,
         text,
@@ -148,6 +147,7 @@ export async function POST(req: NextRequest) {
 
 
 
+    // stripe not applicable to algerian customer base
 
     /*const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],

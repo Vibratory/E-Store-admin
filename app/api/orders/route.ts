@@ -27,7 +27,7 @@ export const GET = async (req: NextRequest) => {
           products: order.products, // full product info now
           totalAmount: order.totalAmount,
           status: order.status,
-          createdAt: format(order.createdAt, "MMM do, yyyy hh:mm:ss"),
+          createdAt: format(order.createdAt, "MMM do, yyyy HH:mm:ss"),
          
         };
       })
