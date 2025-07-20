@@ -3,6 +3,7 @@
 import Loader from '@/components/custom ui/Loader'
 import ProductForm from '@/components/products/ProductForm'
 import React, { useEffect, useState } from 'react'
+import { ProductType } from '@/lib/types'
 
 const ProductDetails = ({ params }: { params: { productId: string }}) => {
   const [loading, setLoading] = useState(true)

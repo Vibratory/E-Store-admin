@@ -27,7 +27,7 @@ export const POST = async (req: NextRequest) => {
       colors,
       price,
       colorVariants
-     
+
     } = await req.json();
 
     if (!title || !description || !media || !category || !price || !stock) {
@@ -50,16 +50,15 @@ export const POST = async (req: NextRequest) => {
       colorVariants
     });
 
-    await newProduct.save();
-
-    if (collections) {
-      for (const collectionId of collections) {
-        const collection = await Collection.findById(collectionId);
-        if (collection) {
-          collection.products.push(newProduct._id);
-          await collection.save();
-        }
-      }
+    if (collections?.length) {
+      await Promise.all(
+        collections.map((collectionId: string) =>
+          Collection.findByIdAndUpdate(
+            collectionId,
+            { $addToSet: { products: newProduct._id } } // avoids duplicates
+          )
+        )
+      );
     }
 
     return NextResponse.json(newProduct, { status: 200 });

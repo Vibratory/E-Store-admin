@@ -77,7 +77,6 @@ export const POST = async (
 
     } = await req.json();
 
-     console.log("color variants might be object ", JSON.stringify(colorVariants))
 
     if (!title || !description || !media || !category || !price) {
       return new NextResponse("Not enough data to create a new product", {
@@ -132,7 +131,6 @@ export const POST = async (
       { new: true }
     ).populate({ path: "collections", model: Collection });
 
-    await updatedProduct.save();
 
     return NextResponse.json(updatedProduct, { status: 200 });
   } catch (err) {
@@ -175,13 +173,11 @@ export const DELETE = async (
     );
 
     //update wishlist
-     await Promise.all(
-      product.collections.map((userId: string) =>
-        User.findByIdAndUpdate(userId, {
-          $pull: { wishlist: product._id },
-        })
-      )
-    );
+
+    await User.updateMany(
+  { wishlist: product._id },
+  { $pull: { wishlist: product._id } }
+);
 
     return new NextResponse(JSON.stringify({ message: "Product deleted" }), {
       status: 200,
