@@ -14,6 +14,8 @@ import {
 import { useState } from "react";
 import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
+import { CollectionType } from "@/lib/types";
+
 
 interface MultiSelectProps {
   placeholder: string;

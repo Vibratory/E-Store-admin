@@ -4,7 +4,8 @@ import { ColumnDef } from "@tanstack/react-table"
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
-import { ColorVariationsType, SizeVariationsType } from "@/lib/types"
+import { ColorVariationsType, SizeVariationsType, OrderItemType } from "@/lib/types"
+
 
 // Quantity Cell Component to rerender quantity
 
@@ -187,9 +188,9 @@ export const columns: ColumnDef<OrderItemType>[] = [
           const size = variant?.sizes.find(
             (size: SizeVariationsType) => size.name === row.original.size
           );
-         
+
           // checks if quantity orderes is in stock or the order is more than what we have in stock
-          if (size.quantity === 0) {
+          if(size){if (size.quantity === 0) {
 
             return <p className="text-red-600">Epuise</p>
 
@@ -201,6 +202,7 @@ export const columns: ColumnDef<OrderItemType>[] = [
           } else {
             return <p>Stock: {size.quantity}</p>
           }
+        }
 
         })()
       )
@@ -212,7 +214,12 @@ export const columns: ColumnDef<OrderItemType>[] = [
     header: "Price",
     cell: ({ row }) => (
 
-      <p>{row.original.product.price * row.original.quantity} DA</p>
+      <p>
+        {row.original.product.solde && row.original.product.newprice ?
+          <p>{row.original.product.newprice * row.original.quantity}</p> :
+          <p>{row.original.product.price * row.original.quantity}</p>
+        } DA
+      </p>
     )
   }
 ]

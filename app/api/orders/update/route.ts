@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Product from "@/lib/models/Product";
 import { ColorVariationsType, SizeVariationsType } from "@/lib/types";
-import OrderDetails from "@/app/(dashboard)/orders/[orderId]/page";
 
 export const POST = async (req: NextRequest) => {
     let result;

@@ -7,7 +7,7 @@ export async function OPTIONS() {
     return NextResponse.json({}, {
         status: 200,
         headers: {
-            "Access-Control-Allow-Origin": "*", //only for testing change to frontend
+            "Access-Control-Allow-Origin": `${process.env.ADMIN_DASHBOARD_URL}`, 
             "Access-Control-Allow-Methods": "POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type",
         },
@@ -31,7 +31,7 @@ export const POST = async (req: NextRequest) => {
             {
                 status: 200,
                 headers: {
-                    "Access-Control-Allow-Origin": "*", // or "http://localhost:3000"
+                    "Access-Control-Allow-Origin": `${process.env.ADMIN_DASHBOARD_URL}`, 
                     "Content-Type": "application/json"
                 },
             })

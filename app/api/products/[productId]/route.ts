@@ -73,10 +73,14 @@ export const POST = async (
       sizes,
       colors,
       price,
-      colorVariants
+      hidden,
+      colorVariants,
+      solde,
+      newprice,
 
     } = await req.json();
-
+    console.log(solde, newprice)
+    
 
     if (!title || !description || !media || !category || !price) {
       return new NextResponse("Not enough data to create a new product", {
@@ -125,11 +129,16 @@ export const POST = async (
         sizes,
         colors,
         price,
-        colorVariants
+        hidden,
+        colorVariants,
+        solde,
+        newprice,
 
       },
       { new: true }
     ).populate({ path: "collections", model: Collection });
+
+
 
 
     return NextResponse.json(updatedProduct, { status: 200 });
@@ -175,9 +184,9 @@ export const DELETE = async (
     //update wishlist
 
     await User.updateMany(
-  { wishlist: product._id },
-  { $pull: { wishlist: product._id } }
-);
+      { wishlist: product._id },
+      { $pull: { wishlist: product._id } }
+    );
 
     return new NextResponse(JSON.stringify({ message: "Product deleted" }), {
       status: 200,
@@ -187,6 +196,47 @@ export const DELETE = async (
     return new NextResponse("Internal error", { status: 500 });
   }
 };
+
+export const PUT = async (req: NextRequest, { params }: { params: { productId: string } }) => {
+
+  try {
+    const userId = auth();
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+
+    }
+    await connectToDB
+
+    const product = await Product.findById(params.productId);
+
+    if (!product) {
+      return new NextResponse("Product not found", { status: 404 })
+    }
+
+    const body = await req.json();
+
+    const updatedFields: Partial<typeof product> = {};
+    if (body.hasOwnProperty("hidden")) updatedFields.hidden = body.hidden;
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      params.productId,
+      updatedFields,
+      { new: true }
+    );
+
+
+
+    return new NextResponse(JSON.stringify(params.productId), { status: 200 });
+
+  } catch (err) {
+
+    console.error("[productId_PUT]", err);
+    return new NextResponse("Internal error", { status: 500 });
+
+  }
+
+
+}
 
 export const dynamic = "force-dynamic";
 

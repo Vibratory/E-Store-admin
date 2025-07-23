@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
+import { OrderColumnType } from "@/lib/types";
 
 
 export const columns: ColumnDef<OrderColumnType>[] = [

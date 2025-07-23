@@ -3,7 +3,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -29,6 +29,8 @@ import Loader from "@/components/custom ui/Loader";
 
 import { ProductType, CollectionType } from "@/lib/types";
 import ColorVariantItem from "./Variants";
+import { useWatch } from "react-hook-form";
+
 
 const formSchema = z.object({
   title: z.string().min(2).max(150),
@@ -53,8 +55,10 @@ const formSchema = z.object({
 
   sizes: z.array(z.string()),
   colors: z.array(z.string()),
-  price: z.coerce.number().min(100),
-  
+  price: z.coerce.number(),
+  solde: z.boolean(),
+  newprice: z.coerce.number(),
+
 });
 
 interface ProductFormProps {
@@ -65,6 +69,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [collections, setCollections] = useState<CollectionType[]>([]);
+  //const [checked, setLoading] = useState(true);
+
 
   const getCollections = async () => {
     try {
@@ -106,6 +112,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
         sizes: [],
         colors: [],
         price: 100,
+        solde: false,
+        newprice: 0,
       },
   });
 
@@ -118,6 +126,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
   } = useFieldArray({
     control,
     name: "colorVariants",
+  });
+
+  //show new price only when sale is checked
+  const solde = useWatch({
+    control,
+    name: "solde",
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -227,6 +241,45 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
 
             <FormField
               control={control}
+              name="solde"
+              render={({ field }) => (
+                <FormItem className="flex items-center gap-2 mt-2">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      id="solde"
+                      className="w-5 h-5 cursor-pointer"
+                      checked={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel htmlFor="solde" className="cursor-pointer">
+                    Solde ?
+                  </FormLabel>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+            {solde && (
+              <FormField
+                control={control}
+                name="newprice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nouveau prix</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            <FormField
+              control={control}
               name="category"
               render={({ field }) => (
                 <FormItem>
@@ -285,8 +338,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                 control={control}
                 name="collections"
                 render={({ field }) => (
-                  <FormItem                     className="w-full"
->
+                  <FormItem className="w-full"
+                  >
                     <FormLabel>Collections</FormLabel>
                     <FormControl>
                       <MultiSelect

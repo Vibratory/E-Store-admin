@@ -9,7 +9,6 @@ const ProductSchema = new mongoose.Schema({
   collections: [{ type: mongoose.Schema.Types.ObjectId, ref: "Collection" }],
   stock: String,
   tags: [String],
-
   colorVariants: [
     {
       name: String,
@@ -21,10 +20,14 @@ const ProductSchema = new mongoose.Schema({
       ]
     }
   ],
-  
   sizes: [String],
   colors: [String],
   price: { type: mongoose.Schema.Types.Decimal128, get: (v: mongoose.Schema.Types.Decimal128) => { return parseFloat(v.toString()) } },
+
+  hidden: Boolean,
+  solde: Boolean,
+  newprice: Number,
+  
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 }, { toJSON: { getters: true } });

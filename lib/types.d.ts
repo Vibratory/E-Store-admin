@@ -21,6 +21,10 @@ type ProductType = {
   sizes: [string];
   colors: [string];
   price: number;
+  hidden: boolean,
+  solde: boolean,
+  newprice:number,
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +46,7 @@ type OrderItemType = {
   color: string;
   size: string;
   quantity: number;
+  totalAmount:number
 }
 
 type CustomerType = {

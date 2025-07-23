@@ -5,12 +5,13 @@ import Order from "@/lib/models/Order";
 import Customer from "@/lib/models/Customer";
 import axios from "axios";
 import Product from "@/lib/models/Product";
+import { OrderItemType } from "@/lib/types";
 
 
 
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", //to be changed
+  "Access-Control-Allow-Origin": `${process.env.ECOMMERCE_STORE_URL}`, 
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 }
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
 
 
     if (!cartItems || !shipInfo) {
-      console.log("not enough data bitch")
+      console.log("not enough data ")
 
       return NextResponse.json({ error: "Not enough data to checkout" }, { status: 400, headers: corsHeaders })
     }
@@ -35,7 +36,6 @@ export async function POST(req: NextRequest) {
       console.log("no cart bitch")
       return NextResponse.json({ error: "Cart is empty" }, { status: 400, headers: corsHeaders })
     }
-    console.log("probably worked bitch cuz we in the function whwere we put whats app messaging")
 
     //getting price of product  from db 
 
@@ -104,8 +104,8 @@ export async function POST(req: NextRequest) {
 
     let text = `Message : ${message} \n\n`; // should include all details of order and time of order
 
-    cartItems.forEach((item) => {
-      text += `Produit: ${item.item.title}\n`
+    cartItems.forEach((item:OrderItemType) => {
+      text += `Produit: ${item.product.title}\n`
       text += `Quantity: ${item.quantity}\n`
       text += `Taille: ${item.size}\n`
       text += `Couleur: ${item.color}\n\n`
@@ -124,28 +124,24 @@ export async function POST(req: NextRequest) {
         chat_id,
         text,
       });
+
       if (response.data.ok) {
+
         return NextResponse.json("Cart is empty", { status: 200, headers: corsHeaders })
 
+
       } else {
+
         return NextResponse.json({ error: "message failed to send" }, { headers: corsHeaders })
       }
 
     } catch (error) {
 
-      console.error('error sensing message to telegram', error)
+      console.error('error sending message to telegram', error)
 
       return NextResponse.json("error sending message", { headers: corsHeaders })
 
     }
-
-
-
-
-
-
-
-
 
     // stripe not applicable to algerian customer base
 
@@ -181,7 +177,6 @@ export async function POST(req: NextRequest) {
 
     console.log("Stripe session created:", session.id)*/
 
-    return NextResponse.json('it worked probably', { headers: corsHeaders })
   } catch (err) {
     console.error("[checkout_POST]", err)
     return NextResponse.json(
