@@ -57,7 +57,7 @@ export const POST = async (req: NextRequest) => {
         collections.map((collectionId: string) =>
           Collection.findByIdAndUpdate(
             collectionId,
-            { $addToSet: { products: newProduct._id } } // avoids duplicates
+            { $addToSet: { products: newProduct._id } } 
           )
         )
       );

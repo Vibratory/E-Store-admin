@@ -46,11 +46,21 @@ export const GET = async (req: NextRequest) => {
     await connectToDB()
 
     const collections = await Collection.find().sort({ createdAt: "desc" })
+    const response = NextResponse.json(collections, { status: 200 })
 
-    return NextResponse.json(collections, { status: 200 })
+    response.headers.set("Access-Control-Allow-Origin", "*"); // or replace * with your domain
+    response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    return response
   } catch (err) {
     console.log("[collections_GET]", err)
-    return new NextResponse("Internal Server Error", { status: 500 })
+    return new NextResponse("Internal Server Error", { status: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      }, })
   }
 }
 

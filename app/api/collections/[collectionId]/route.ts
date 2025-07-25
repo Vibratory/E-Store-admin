@@ -55,9 +55,12 @@ export const POST = async (
 
     collection = await Collection.findByIdAndUpdate(
       params.collectionId,
-      { title, description, image },
+      {
+        $addtoset: { title, description, image },
+      },
       { new: true }
     );
+
 
     await collection.save();
 
@@ -87,7 +90,7 @@ export const DELETE = async (
       { collections: params.collectionId },
       { $pull: { collections: params.collectionId } }
     );
-    
+
     return new NextResponse("Collection is deleted", { status: 200 });
   } catch (err) {
     console.log("[collectionId_DELETE]", err);

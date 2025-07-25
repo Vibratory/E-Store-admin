@@ -3,7 +3,6 @@ import Product from "@/lib/models/Product";
 import { connectToDB } from "@/lib/mongoDB";
 import { auth } from "@clerk/nextjs";
 //import { Users } from "lucide-react";
-import Users from "@/lib/models/User"
 
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/lib/models/User";
@@ -79,8 +78,7 @@ export const POST = async (
       newprice,
 
     } = await req.json();
-    console.log(solde, newprice)
-    
+
 
     if (!title || !description || !media || !category || !price) {
       return new NextResponse("Not enough data to create a new product", {
@@ -88,32 +86,37 @@ export const POST = async (
       });
     }
 
-    const addedCollections = collections.filter(
-      (collectionId: string) => !product.collections.includes(collectionId)
-    );
-    // included in new data, but not included in the previous data
+  // Get the old and new collection IDs
+    const oldCollectionIds = product.collections.map(String);
+    const newCollectionIds = collections.map(String);
 
-    const removedCollections = product.collections.filter(
-      (collectionId: string) => !collections.includes(collectionId)
+    const addedCollections = newCollectionIds.filter(
+      (id) => !oldCollectionIds.includes(id)
     );
-    // included in previous data, but not included in the new data
 
-    // Update collections
-    await Promise.all([
-      // Update added collections with this product
-      ...addedCollections.map((collectionId: string) =>
+    const removedCollections = oldCollectionIds.filter(
+      (id) => !newCollectionIds.includes(id)
+    );
+
+    // Add product to new collections
+    await Promise.all(
+      addedCollections.map((collectionId) =>
         Collection.findByIdAndUpdate(collectionId, {
-          $push: { products: product._id },
+          $addToSet: { products: product._id },
         })
-      ),
+      )
+    );
 
-      // Update removed collections without this product
-      ...removedCollections.map((collectionId: string) =>
+    // Remove product from old collections that no longer apply
+    await Promise.all(
+      removedCollections.map((collectionId) =>
         Collection.findByIdAndUpdate(collectionId, {
           $pull: { products: product._id },
         })
-      ),
-    ]);
+      )
+    );
+
+
 
     // Update product
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -205,7 +208,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { productId: s
       return new NextResponse("Unauthorized", { status: 401 });
 
     }
-    await connectToDB
+    await connectToDB();
 
     const product = await Product.findById(params.productId);
 

@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
 
     if (!cartItems.length) {
 
-      console.log("no cart bitch")
       return NextResponse.json({ error: "Cart is empty" }, { status: 400, headers: corsHeaders })
     }
 
@@ -104,8 +103,9 @@ export async function POST(req: NextRequest) {
 
     let text = `Message : ${message} \n\n`; // should include all details of order and time of order
 
-    cartItems.forEach((item:OrderItemType) => {
-      text += `Produit: ${item.product.title}\n`
+    cartItems.forEach((item:any) => {
+       console.log("item.product is ===============> ",item.item)
+      text += `Produit: ${item.item.title}\n`
       text += `Quantity: ${item.quantity}\n`
       text += `Taille: ${item.size}\n`
       text += `Couleur: ${item.color}\n\n`
